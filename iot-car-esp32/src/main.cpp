@@ -198,7 +198,7 @@ void reconnectMQTT()
         // Create a unique client ID
         String clientId = MQTT_CLIENT_ID;
         clientId += "-";
-        clientId += String(random(0xffff), HEX);
+        clientId += String(random(0xffff), HEX); // 
 
         if (mqttClient.connect(clientId.c_str()))
         {
@@ -211,9 +211,9 @@ void reconnectMQTT()
             Serial.println(TOPIC_COMMAND);
 
             // Subscribe to test topic
-            mqttClient.subscribe(TOPIC_TEST);
-            Serial.print("[MQTT] Subscribed to: ");
-            Serial.println(TOPIC_TEST);
+            // mqttClient.subscribe(TOPIC_TEST);
+            // Serial.print("[MQTT] Subscribed to: ");
+            // Serial.println(TOPIC_TEST);
 
             // Publish online status
             StaticJsonDocument<128> statusDoc;
@@ -335,8 +335,9 @@ void sendTelemetry()
     doc["free_heap"] = ESP.getFreeHeap(); // Free heap memory. that mean this helps to monitor memory usage
 
     char buffer[256];
-    serializeJson(doc, buffer);
+    serializeJson(doc, buffer); // Convert JSON document to string
 
+    // PubSubClient publishes with QoS 0 by default (no QoS parameter available)
     mqttClient.publish(TOPIC_TELEMETRY, buffer);
 
     Serial.println();

@@ -198,11 +198,20 @@ void reconnectMQTT()
         // Create a unique client ID
         String clientId = MQTT_CLIENT_ID;
         clientId += "-";
-        clientId += String(random(0xffff), HEX); // 
+        clientId += String(random(0xffff), HEX); //
 
-        if (mqttClient.connect(clientId.c_str()))
+        // In reconnectMQTT(), change connect to:
+        if (mqttClient.connect(clientId.c_str(),
+                               NULL,                                                // username
+                               NULL,                                                // password
+                               TOPIC_STATUS,                                        // LWT topic
+                               0,                                                   // LWT QoS
+                               true,                                                // LWT retain
+                               "{\"device_id\":\"car-001\",\"status\":\"offline\"}" // LWT message
+                               ))
         {
 
+            
             Serial.println(" Connected!");
 
             // Subscribe to command topic
@@ -210,10 +219,6 @@ void reconnectMQTT()
             Serial.print("[MQTT] Subscribed to: ");
             Serial.println(TOPIC_COMMAND);
 
-            // Subscribe to test topic
-            // mqttClient.subscribe(TOPIC_TEST);
-            // Serial.print("[MQTT] Subscribed to: ");
-            // Serial.println(TOPIC_TEST);
 
             // Publish online status
             StaticJsonDocument<128> statusDoc;
@@ -227,7 +232,7 @@ void reconnectMQTT()
             Serial.println("[MQTT] Published online status");
 
             // Send initial test message
-            sendTestMessage();
+            //sendTestMessage();
         }
         else
         {

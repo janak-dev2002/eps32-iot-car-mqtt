@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: iot-car-mqtt
+    restart: unless-stopped
+    ports:
+      - "1883:1883"    # MQTT standard port
+      - "9001:9001"    # WebSocket port (optional)
+    volumes:
+      - ./config:/mosquitto/config
+      - ./data:/mosquitto/data
+      - ./log:/mosquitto/log
+    networks:
+      - iot-network
+
+networks:
+  iot-network:
+    driver: bridge

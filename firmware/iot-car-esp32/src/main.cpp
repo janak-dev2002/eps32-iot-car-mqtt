@@ -58,6 +58,7 @@ void setupPins();
 void testMotorLEDs();
 float readUltrasonic();
 void updateMotorLEDs();
+int readBattery();
 
 void setup()
 {
@@ -189,11 +190,15 @@ void setupMQTT()
 
 void reconnectMQTT()
 {
-
     while (!mqttClient.connected())
     {
 
         Serial.print("[MQTT] Attempting connection...");
+
+        // Prepare Last Will Testament
+        String lwtPayload = "{\"device_id\":\"" + String(DEVICE_ID) +
+                            "\",\"status\":\"offline\",\"timestamp\":" +
+                            String(millis()) + "}";
 
         // Create a unique client ID
         String clientId = MQTT_CLIENT_ID;
@@ -202,23 +207,16 @@ void reconnectMQTT()
 
         // In reconnectMQTT(), change connect to:
         if (mqttClient.connect(clientId.c_str(),
-                               NULL,                                                // username
-                               NULL,                                                // password
-                               TOPIC_STATUS,                                        // LWT topic
-                               0,                                                   // LWT QoS
-                               true,                                                // LWT retain
-                               "{\"device_id\":\"car-001\",\"status\":\"offline\"}" // LWT message
+                               NULL,              // username
+                               NULL,              // password
+                               TOPIC_STATUS,      // LWT topic
+                               QOS_STATUS,        // LWT QoS
+                               true,              // LWT retain
+                               lwtPayload.c_str() // LWT message
                                ))
         {
 
-            
             Serial.println(" Connected!");
-
-            // Subscribe to command topic
-            mqttClient.subscribe(TOPIC_COMMAND);
-            Serial.print("[MQTT] Subscribed to: ");
-            Serial.println(TOPIC_COMMAND);
-
 
             // Publish online status
             StaticJsonDocument<128> statusDoc;
@@ -231,8 +229,13 @@ void reconnectMQTT()
             mqttClient.publish(TOPIC_STATUS, statusBuffer, true);
             Serial.println("[MQTT] Published online status");
 
+            // Subscribe to command topic
+            mqttClient.subscribe(TOPIC_COMMAND, QOS_COMMAND);
+            Serial.print("[MQTT] Subscribed to: ");
+            Serial.println(TOPIC_COMMAND);
+
             // Send initial test message
-            //sendTestMessage();
+            // sendTestMessage();
         }
         else
         {
@@ -255,10 +258,17 @@ void mqttCallback(char *topic, byte *payload, unsigned int length)
     Serial.print("[MQTT] Message received on topic: ");
     Serial.println(topic);
 
+    // // Convert payload to string
+    // char message[length + 1];         // +1 for null terminator, that mean this helps to make string
+    // memcpy(message, payload, length); // copy payload to message
+    // message[length] = '\0';           // null terminate the string
+
     // Convert payload to string
-    char message[length + 1];         // +1 for null terminator, that mean this helps to make string
-    memcpy(message, payload, length); // copy payload to message
-    message[length] = '\0';           // null terminate the string
+    String message;
+    for (unsigned int i = 0; i < length; i++)
+    {
+        message += (char)payload[i];
+    }
 
     Serial.print("[MQTT] Payload: ");
     Serial.println(message);
@@ -329,13 +339,18 @@ void sendTelemetry()
 {
     messageCount++;
 
-    float distance = readUltrasonic();
+    int distance = readUltrasonic(); // Implement based on your sensor
+    int battery = readBattery();     // Implement based on your battery monitoring
+    int temp = 25;                   // Placeholder
 
+    // Build JSON
     StaticJsonDocument<256> doc;
     doc["device_id"] = DEVICE_ID;
     doc["timestamp"] = millis();
-    doc["message_count"] = messageCount;
+    doc["battery"] = battery;
     doc["distance_front"] = distance;
+    doc["temperature"] = temp;
+    doc["current_action"] = currentCommand;
     doc["wifi_rssi"] = WiFi.RSSI();
     doc["free_heap"] = ESP.getFreeHeap(); // Free heap memory. that mean this helps to monitor memory usage
 
@@ -343,7 +358,7 @@ void sendTelemetry()
     serializeJson(doc, buffer); // Convert JSON document to string
 
     // PubSubClient publishes with QoS 0 by default (no QoS parameter available)
-    mqttClient.publish(TOPIC_TELEMETRY, buffer);
+    mqttClient.publish(TOPIC_TELEMETRY, buffer, false); // retain false for telemetry
 
     Serial.println();
     Serial.print("[TELEMETRY] #");
@@ -451,37 +466,7 @@ float readUltrasonic()
     return (float)distance;
 }
 
-// float readUltrasonic()
-// {
 
-//     // triger a pulse
-//     digitalWrite(PIN_ULTRASONIC_TRIG, LOW);
-//     delay(2);
-//     digitalWrite(PIN_ULTRASONIC_TRIG, HIGH);
-//     delay(10);
-//     digitalWrite(PIN_ULTRASONIC_TRIG, LOW);
-
-//     long duration = pulseIn(PIN_ULTRASONIC_ECHO, HIGH, 30000); // why 30000 ? => timeout for pulseIn and duration coming from here is in microseconds
-
-//     // v = (dis/t)*2
-//     // dis = (v/2)t
-
-//     float sound_velocity = 343.0/1000000.0;                         // consider as 343 m/s
-//     float distance = (sound_velocity / 2) * duration; // distance coming as m
-
-//     float distance_cm = distance * 100;
-//     Serial.print("Distance === ");
-//     Serial.println(distance_cm);
-
-//     // clam to resonable value
-
-//     if (distance_cm <= 0 || distance_cm > 400)
-//     {
-//         distance_cm = 999.0; // out-of-range
-//     }
-
-//     return distance_cm;
-// }
 
 // float readUltrasonic() {
 //     // Send trigger pulse
@@ -506,6 +491,17 @@ float readUltrasonic()
 
 //     return distance;
 // }
+
+
+// ------------------------------------
+// read battery level
+// ------------------------------------
+int readBattery()
+{
+    // Placeholder function - replace with actual battery reading logic
+    // For simulation, return a fixed value
+    return 100; // Assume full battery for testing
+}
 
 // ============================================
 // Update Motor LEDs based on current command

@@ -26,6 +26,14 @@ const char* TOPIC_STATUS = "iot-car/car-001/status";
 const char* TOPIC_RESPONSE = "iot-car/car-001/response";
 const char* TOPIC_TEST = "iot-car/car-001/test";
 
+
+// QoS Levels
+const int QOS_TELEMETRY = 0;  // Fire and forget
+const int QOS_COMMAND = 1;    // Ensure delivery
+const int QOS_STATUS = 1;     // Ensure delivery
+
+
+
 // ============================================
 // GPIO Pin Definitions (matches diagram.json)
 // ============================================
@@ -35,7 +43,7 @@ const char* TOPIC_TEST = "iot-car/car-001/test";
 #define PIN_ULTRASONIC_ECHO 33
 
 // Timing Configuration
-#define TELEMETRY_INTERVAL 5000  // Send telemetry every 5 seconds
+#define TELEMETRY_INTERVAL 500  // Send telemetry every 5 seconds
 #define MQTT_RECONNECT_DELAY 5000
 
 #endif // CONFIG_H

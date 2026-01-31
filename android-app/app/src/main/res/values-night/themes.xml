@@ -1,0 +1,28 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Dark theme variant -->
+    <style name="Base.Theme.MQTTCar" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Primary brand color -->
+        <item name="colorPrimary">@color/neon_cyan</item>
+        <item name="colorPrimaryVariant">@color/neon_cyan_dim</item>
+        <item name="colorOnPrimary">@color/bg_deep_space</item>
+
+        <!-- Secondary brand color -->
+        <item name="colorSecondary">@color/neon_magenta</item>
+        <item name="colorSecondaryVariant">@color/neon_magenta_dim</item>
+        <item name="colorOnSecondary">@color/bg_deep_space</item>
+
+        <!-- Background colors -->
+        <item name="android:colorBackground">@color/bg_deep_space</item>
+        <item name="colorSurface">@color/bg_dark_primary</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor">@color/bg_deep_space</item>
+        <item name="android:navigationBarColor">@color/bg_deep_space</item>
+
+        <!-- Ripple effect -->
+        <item name="android:colorControlHighlight">@color/neon_cyan_glow</item>
+    </style>
+
+    <style name="Theme.MQTTCar" parent="Base.Theme.MQTTCar" />
+</resources>

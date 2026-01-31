@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MQTT-Car</string>
+    <string name="remember_configuration">Remember configuration</string>
+    <string name="password">Password</string>
+    <string name="admin">admin</string>
+    <string name="device_id">Device ID</string>
+</resources>

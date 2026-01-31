@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Intensified outer glow -->
+    <item
+        android:left="2dp"
+        android:top="2dp"
+        android:right="2dp"
+        android:bottom="2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#4000fff7" />
+            <corners android:radius="14dp" />
+        </shape>
+    </item>
+    <!-- Slightly lighter dark background on press -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#2a2a3e" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+    <!-- Brighter neon border -->
+    <item>
+        <shape android:shape="rectangle">
+            <stroke
+                android:width="3dp"
+                android:color="#00ffff" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+</layer-list>

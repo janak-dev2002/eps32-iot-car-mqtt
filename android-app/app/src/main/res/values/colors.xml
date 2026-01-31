@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base Colors -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Cyberpunk Background -->
+    <color name="bg_deep_space">#0a0a0f</color>
+    <color name="bg_dark_primary">#12121a</color>
+    <color name="bg_dark_secondary">#1a1a2e</color>
+    <color name="bg_card">#1e1e2e</color>
+    <color name="bg_card_glass">#2a2a3e</color>
+
+    <!-- Neon Primary - Cyan -->
+    <color name="neon_cyan">#00fff7</color>
+    <color name="neon_cyan_bright">#00ffff</color>
+    <color name="neon_cyan_dim">#00d4ff</color>
+    <color name="neon_cyan_glow">#4000fff7</color>
+
+    <!-- Neon Accent - Magenta -->
+    <color name="neon_magenta">#ff00ff</color>
+    <color name="neon_magenta_bright">#e040fb</color>
+    <color name="neon_magenta_dim">#c51ada</color>
+    <color name="neon_magenta_glow">#40ff00ff</color>
+
+    <!-- Status Colors -->
+    <color name="status_online">#00ff88</color>
+    <color name="status_online_glow">#4000ff88</color>
+    <color name="status_offline">#ff3d71</color>
+    <color name="status_offline_glow">#40ff3d71</color>
+    <color name="status_warning">#ffab00</color>
+    <color name="status_warning_glow">#40ffab00</color>
+
+    <!-- Button Colors -->
+    <color name="btn_control_bg">#2a2a4a</color>
+    <color name="btn_control_border">#00fff7</color>
+    <color name="btn_control_pressed">#3a3a5a</color>
+    <color name="btn_stop_bg">#3d1a2e</color>
+    <color name="btn_stop_border">#ff3d71</color>
+    <color name="btn_connect_start">#00d4ff</color>
+    <color name="btn_connect_end">#c51ada</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#ffffff</color>
+    <color name="text_secondary">#b0b0c0</color>
+    <color name="text_accent">#00fff7</color>
+    <color name="text_value">#00ff88</color>
+
+    <!-- Gradient Colors -->
+    <color name="gradient_start">#00fff7</color>
+    <color name="gradient_end">#ff00ff</color>
+</resources>

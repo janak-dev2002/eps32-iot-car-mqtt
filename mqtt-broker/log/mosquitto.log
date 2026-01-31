@@ -15976,3 +15976,73 @@
 1769850090: Received PUBACK from android-app-1769850088365 (Mid: 1, RC:0)
 1769850094: Client android-app-1769850088365 closed its connection.
 1769850479: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1769851208: New connection from 172.18.0.1:41992 on port 1883.
+1769851208: New client connected from 172.18.0.1:41992 as android-app-1769851206064 (p2, c1, k60).
+1769851208: No will message specified.
+1769851208: Sending CONNACK to android-app-1769851206064 (0, 0)
+1769851208: Received SUBSCRIBE from android-app-1769851206064
+1769851208: 	iot-car/car-001/telemetry (QoS 0)
+1769851208: android-app-1769851206064 0 iot-car/car-001/telemetry
+1769851208: Sending SUBACK to android-app-1769851206064
+1769851208: Received SUBSCRIBE from android-app-1769851206064
+1769851208: 	iot-car/car-001/status (QoS 1)
+1769851208: android-app-1769851206064 1 iot-car/car-001/status
+1769851208: Sending SUBACK to android-app-1769851206064
+1769851208: Sending PUBLISH to android-app-1769851206064 (d0, q1, r1, m1, 'iot-car/car-001/status', ... (60 bytes))
+1769851208: Received PUBACK from android-app-1769851206064 (Mid: 1, RC:0)
+1769851211: Client android-app-1769851206064 closed its connection.
+1769851218: New connection from 172.18.0.1:49412 on port 1883.
+1769851219: New client connected from 172.18.0.1:49412 as android-app-1769851216633 (p2, c1, k60).
+1769851219: No will message specified.
+1769851219: Sending CONNACK to android-app-1769851216633 (0, 0)
+1769851219: Received SUBSCRIBE from android-app-1769851216633
+1769851219: 	iot-car/car-001/telemetry (QoS 0)
+1769851219: android-app-1769851216633 0 iot-car/car-001/telemetry
+1769851219: Sending SUBACK to android-app-1769851216633
+1769851219: Received SUBSCRIBE from android-app-1769851216633
+1769851219: 	iot-car/car-001/status (QoS 1)
+1769851219: android-app-1769851216633 1 iot-car/car-001/status
+1769851219: Sending SUBACK to android-app-1769851216633
+1769851219: Sending PUBLISH to android-app-1769851216633 (d0, q1, r1, m1, 'iot-car/car-001/status', ... (60 bytes))
+1769851219: Received PUBACK from android-app-1769851216633 (Mid: 1, RC:0)
+1769851221: Received DISCONNECT from android-app-1769851216633
+1769851221: Client android-app-1769851216633 disconnected.
+1769851237: New connection from 172.18.0.1:50294 on port 1883.
+1769851238: New client connected from 172.18.0.1:50294 as android-app-1769851233151 (p2, c1, k60).
+1769851238: No will message specified.
+1769851238: Sending CONNACK to android-app-1769851233151 (0, 0)
+1769851238: Received SUBSCRIBE from android-app-1769851233151
+1769851238: 	iot-car/car-001/telemetry (QoS 0)
+1769851238: android-app-1769851233151 0 iot-car/car-001/telemetry
+1769851238: Sending SUBACK to android-app-1769851233151
+1769851238: Received SUBSCRIBE from android-app-1769851233151
+1769851238: 	iot-car/car-001/status (QoS 1)
+1769851238: android-app-1769851233151 1 iot-car/car-001/status
+1769851238: Sending SUBACK to android-app-1769851233151
+1769851238: Sending PUBLISH to android-app-1769851233151 (d0, q1, r1, m1, 'iot-car/car-001/status', ... (60 bytes))
+1769851238: Received PUBACK from android-app-1769851233151 (Mid: 1, RC:0)
+1769851239: Received PUBLISH from android-app-1769851233151 (d0, q1, r0, m3, 'iot-car/car-001/command', ... (53 bytes))
+1769851239: Sending PUBACK to android-app-1769851233151 (m3, rc0)
+1769851239: Received PUBLISH from android-app-1769851233151 (d0, q1, r0, m4, 'iot-car/car-001/command', ... (50 bytes))
+1769851239: Sending PUBACK to android-app-1769851233151 (m4, rc0)
+1769851299: Received PINGREQ from android-app-1769851233151
+1769851299: Sending PINGRESP to android-app-1769851233151
+1769851360: Received PINGREQ from android-app-1769851233151
+1769851360: Sending PINGRESP to android-app-1769851233151
+1769851418: Received PINGREQ from android-app-1769851233151
+1769851418: Sending PINGRESP to android-app-1769851233151
+1769851478: Received PINGREQ from android-app-1769851233151
+1769851478: Sending PINGRESP to android-app-1769851233151
+1769851538: Received PINGREQ from android-app-1769851233151
+1769851538: Sending PINGRESP to android-app-1769851233151
+1769851599: Received PINGREQ from android-app-1769851233151
+1769851599: Sending PINGRESP to android-app-1769851233151
+1769851659: Received PINGREQ from android-app-1769851233151
+1769851659: Sending PINGRESP to android-app-1769851233151
+1769851697: Client android-app-1769851233151 closed its connection.
+1769855377: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1769857331: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1769859292: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1769861260: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1769863234: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1769865210: Saving in-memory database to /mosquitto/data//mosquitto.db.

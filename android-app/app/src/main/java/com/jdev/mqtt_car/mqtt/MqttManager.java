@@ -26,7 +26,7 @@ public class MqttManager {
         void onTelemetryReceived(int battery, int distance, int temperature, String currentAction, int wifiRssi,
                 int freeHeap);
 
-        void onStatusReceived(String status);
+        void onCarStatusReceived(String device_id, String status, String firmware);
 
         void onError(String message);
     }
@@ -122,8 +122,10 @@ public class MqttManager {
                 listener.onTelemetryReceived(battery, distance, temperature, currentAction, wifiRssi, freeHeap);
             } else if (topic.contains("/status")) {
                 // Handle status updates from ESP3)
+                String deviceId = json.optString("device_id");
                 String currentStatus = json.optString("status", "unknown");
-                listener.onStatusReceived(currentStatus);
+                String firmware = json.optString("firmware");
+                listener.onCarStatusReceived(deviceId, currentStatus,firmware);
             }
         } catch (Exception e) {
             Log.e(TAG, "Parse error", e);

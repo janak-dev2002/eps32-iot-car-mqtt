@@ -1,4 +1,4 @@
-package com.jdev.mqtt_car;
+package com.jdev.mqtt_car.ui.main;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -15,15 +15,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.jdev.mqtt_car.model.MqttConnectionState;
+import com.jdev.mqtt_car.ui.login.LoginActivity;
+import com.jdev.mqtt_car.R;
 import com.jdev.mqtt_car.mqtt.MqttManager;
 import com.jdev.mqtt_car.mqtt.MqttPreferences;
 
-public class MainActivity extends AppCompatActivity implements MqttManager.MqttCallback {
+public class MainActivity extends AppCompatActivity{
 
-    private MqttManager mqttManager;
+//    private MqttManager mqttManager;
 
-    // Status indicators
+    private MainViewModel mainViewModel;// Status indicators
     private View MqttIndicatorView, carIndicatorView;
 
     // Telemetry displays
@@ -47,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements MqttManager.MqttC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
@@ -56,17 +61,74 @@ public class MainActivity extends AppCompatActivity implements MqttManager.MqttC
             return insets;
         });
 
+
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        // Initialize Observers......
+        setUpObservers();
+
         // Load animations
         loadAnimations();
 
         // Initialize views
         initializeViews();
 
-        // Initialize MQTT
-        mqttManager = new MqttManager(this, this);
-
         // Setup control buttons with touch-hold behavior
         setupControlButtons();
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void setUpObservers(){
+
+        mainViewModel.getTelemetryDataLiveData().observe(this, data ->{
+            batteryText.setText(data.getBatteryDisplay());
+            distanceText.setText(data.getDistanceDisplay());
+            rssiText.setText(data.getRssiDisplay());
+            tempText.setText(data.getTemperatureDisplay());
+        });
+
+        mainViewModel.getActionText().observe(this,data ->{
+            // Format action text nicely
+            String displayAction = data.toUpperCase();
+            if (displayAction.equals("STOP")) {
+                displayAction = "IDLE";
+            }
+//            actionText.setText(displayAction);
+            updateActionDisplay(displayAction);
+        });
+
+        mainViewModel.getCarStatusLiveData().observe(this,data->{
+            if (data.getStatus().equals("online")) {
+                carIndicatorView.setBackgroundResource(R.drawable.circle_green);
+                startPulseAnimation(carIndicatorView);
+            } else {
+                carIndicatorView.setBackgroundResource(R.drawable.circle_red);
+                stopAnimation(carIndicatorView);
+            }
+        });
+
+        mainViewModel.getMqttConnectionStateLiveData().observe(this, data ->{
+
+            if(data.equals(MqttConnectionState.CONNECTING)){
+                btnConnect.setText("⚡ "+MqttConnectionState.CONNECTING+" ⚡");
+            } else if (data.equals(MqttConnectionState.CONNECTED)) {
+                isConnected = true;
+                MqttIndicatorView.setBackgroundResource(R.drawable.circle_green);
+                startPulseAnimation(MqttIndicatorView);
+                btnConnect.setText("⚡ DISCONNECT ⚡");
+            }else{
+                isConnected = false;
+                MqttIndicatorView.setBackgroundResource(R.drawable.circle_red);
+                stopAnimation(MqttIndicatorView);
+                btnConnect.setText("⚡ CONNECT ⚡");
+            }
+        });
+
+        mainViewModel.getErrorMessage().observe(this,data->{
+            btnConnect.setText("⚡ CONNECT ⚡");
+            stopAnimation(MqttIndicatorView);
+            stopAnimation(carIndicatorView);
+        });
+
     }
 
     /**
@@ -101,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements MqttManager.MqttC
         btnSettings.setOnClickListener(v -> {
             // Disconnect if connected
             if (isConnected) {
-                mqttManager.disconnect();
+                mainViewModel.disconnect();
             }
             // Clear "remember" flag so login screen shows
             MqttPreferences prefs = new MqttPreferences(this);
@@ -116,11 +178,9 @@ public class MainActivity extends AppCompatActivity implements MqttManager.MqttC
         btnConnect.setOnClickListener(v -> {
             animateButtonPress(v);
             if (!isConnected) {
-                mqttManager.connect();
-                btnConnect.setText("⚡ CONNECTING... ⚡");
+                mainViewModel.connect();
             } else {
-                mqttManager.disconnect();
-                onDisconnected();
+                mainViewModel.disconnect();
             }
         });
     }
@@ -140,8 +200,8 @@ public class MainActivity extends AppCompatActivity implements MqttManager.MqttC
         Button btnStop = findViewById(R.id.btnStop);
         btnStop.setOnClickListener(v -> {
             animateButtonPress(v);
-            mqttManager.sendCommand("stop");
-            updateActionDisplay("STOP");
+            mainViewModel.sendCommand("stop");
+//            updateActionDisplay("STOP");
         });
     }
 
@@ -162,17 +222,14 @@ public class MainActivity extends AppCompatActivity implements MqttManager.MqttC
                     // Visual feedback
                     v.startAnimation(buttonPressAnimation);
                     // Start moving - send action directly to ESP32
-                    mqttManager.sendCommand(action);
-                    updateActionDisplay(action.toUpperCase());
-                    break;
+                    mainViewModel.sendCommand(action);
 
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
                     // Visual feedback
                     v.startAnimation(buttonReleaseAnimation);
                     // Stop when released
-                    mqttManager.sendCommand("stop");
-                    updateActionDisplay("IDLE");
+                    mainViewModel.sendCommand("stop");
                     break;
             }
             return false; // Allow click events too
@@ -207,82 +264,10 @@ public class MainActivity extends AppCompatActivity implements MqttManager.MqttC
         view.clearAnimation();
     }
 
-    @SuppressLint("SetTextI18n")
-    @Override
-    public void onConnected() {
-        runOnUiThread(() -> {
-            isConnected = true;
-            MqttIndicatorView.setBackgroundResource(R.drawable.circle_green);
-            startPulseAnimation(MqttIndicatorView);
-            btnConnect.setText("⚡ DISCONNECT ⚡");
-        });
-    }
-
-    @SuppressLint("SetTextI18n")
-    @Override
-    public void onDisconnected() {
-        runOnUiThread(() -> {
-            isConnected = false;
-            MqttIndicatorView.setBackgroundResource(R.drawable.circle_red);
-            stopAnimation(MqttIndicatorView);
-            carIndicatorView.setBackgroundResource(R.drawable.circle_red);
-            stopAnimation(carIndicatorView);
-            btnConnect.setText("⚡ CONNECT ⚡");
-
-            // Reset telemetry displays
-            batteryText.setText("---%");
-            distanceText.setText("---cm");
-            rssiText.setText("--- dBm");
-            tempText.setText("---°C");
-            actionText.setText("IDLE");
-        });
-    }
-
-    @SuppressLint("SetTextI18n")
-    @Override
-    public void onTelemetryReceived(int battery, int distance, int temperature,
-            String currentAction, int wifiRssi, int freeHeap) {
-        runOnUiThread(() -> {
-            // Update all telemetry displays
-            batteryText.setText(battery + "%");
-            distanceText.setText(distance + "cm");
-            rssiText.setText(wifiRssi + " dBm");
-            tempText.setText(temperature + "°C");
-
-            // Format action text nicely
-            String displayAction = currentAction.toUpperCase();
-            if (displayAction.equals("STOP")) {
-                displayAction = "IDLE";
-            }
-            actionText.setText(displayAction);
-        });
-    }
-
-    @Override
-    public void onStatusReceived(String status) {
-        runOnUiThread(() -> {
-            if (status.equals("online")) {
-                carIndicatorView.setBackgroundResource(R.drawable.circle_green);
-                startPulseAnimation(carIndicatorView);
-            } else {
-                carIndicatorView.setBackgroundResource(R.drawable.circle_red);
-                stopAnimation(carIndicatorView);
-            }
-        });
-    }
-
-    @Override
-    public void onError(String message) {
-        runOnUiThread(() -> {
-            btnConnect.setText("⚡ CONNECT ⚡");
-            stopAnimation(MqttIndicatorView);
-            stopAnimation(carIndicatorView);
-        });
-    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mqttManager.disconnect();
+        mainViewModel.disconnect();
     }
 }

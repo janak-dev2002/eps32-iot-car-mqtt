@@ -1,4 +1,4 @@
-package com.jdev.mqtt_car;
+package com.jdev.mqtt_car.ui.login;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +15,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.jdev.mqtt_car.R;
 import com.jdev.mqtt_car.mqtt.MqttPreferences;
+import com.jdev.mqtt_car.ui.main.MainActivity;
 
 /**
  * Login/Configuration Activity for MQTT Server settings.

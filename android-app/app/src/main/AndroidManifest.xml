@@ -19,7 +19,7 @@
 
         <!-- Login/Configuration Activity - Entry Point -->
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.login.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,7 +29,7 @@
 
         <!-- Main Controller Activity -->
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.main.MainActivity"
             android:exported="false" />
         <service android:name="info.mqtt.android.service.MqttService"
             android:exported="false" />

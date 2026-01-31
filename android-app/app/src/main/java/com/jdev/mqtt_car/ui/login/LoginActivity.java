@@ -84,9 +84,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void validateAndConnect() {
+
         hideError();
 
-        // Get input values
         String brokerIp = editBrokerIp.getText().toString().trim();
         String portStr = editBrokerPort.getText().toString().trim();
         String deviceId = editDeviceId.getText().toString().trim();
@@ -142,6 +142,6 @@ public class LoginActivity extends AppCompatActivity {
     private void navigateToMain() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
-        finish(); // Close login activity
+        finish(); // Close login activity, then you cant back to the login screen again
     }
 }

@@ -218,6 +218,7 @@ public class MainActivity extends AppCompatActivity implements MqttManager.MqttC
         });
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onDisconnected() {
         runOnUiThread(() -> {

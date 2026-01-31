@@ -1,0 +1,80 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme - Cyberpunk Dark -->
+    <style name="Base.Theme.MQTTCar" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color -->
+        <item name="colorPrimary">@color/neon_cyan</item>
+        <item name="colorPrimaryVariant">@color/neon_cyan_dim</item>
+        <item name="colorOnPrimary">@color/bg_deep_space</item>
+
+        <!-- Secondary brand color -->
+        <item name="colorSecondary">@color/neon_magenta</item>
+        <item name="colorSecondaryVariant">@color/neon_magenta_dim</item>
+        <item name="colorOnSecondary">@color/bg_deep_space</item>
+
+        <!-- Background colors -->
+        <item name="android:colorBackground">@color/bg_deep_space</item>
+        <item name="colorSurface">@color/bg_dark_primary</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor">@color/bg_deep_space</item>
+        <item name="android:navigationBarColor">@color/bg_deep_space</item>
+
+        <!-- Ripple effect -->
+        <item name="android:colorControlHighlight">@color/neon_cyan_glow</item>
+    </style>
+
+    <style name="Theme.MQTTCar" parent="Base.Theme.MQTTCar" />
+
+    <!-- Glassmorphism Card Style -->
+    <style name="GlassCard">
+        <item name="android:background">@drawable/card_glassmorphism</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <!-- Neon Button Style -->
+    <style name="NeonButton" parent="Widget.Material3.Button">
+        <item name="android:background">@drawable/btn_control_selector</item>
+        <item name="android:textColor">@color/neon_cyan</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <!-- Stop Button Style -->
+    <style name="StopButton" parent="Widget.Material3.Button">
+        <item name="android:background">@drawable/btn_stop_selector</item>
+        <item name="android:textColor">@color/status_offline</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <!-- Connect Button Style -->
+    <style name="ConnectButton" parent="Widget.Material3.Button">
+        <item name="android:background">@drawable/btn_connect_gradient</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <!-- Telemetry Label Style -->
+    <style name="TelemetryLabel">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <!-- Telemetry Value Style -->
+    <style name="TelemetryValue">
+        <item name="android:textColor">@color/text_value</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Header Title Style -->
+    <style name="HeaderTitle">
+        <item name="android:textColor">@color/neon_cyan</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.15</item>
+    </style>
+</resources>

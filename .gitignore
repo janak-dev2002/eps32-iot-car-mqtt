@@ -183,3 +183,39 @@ coverage/
 *.tar.gz
 *.rar
 .eslintcache
+
+# ────────────────────────────────────────────
+# Android App
+# ────────────────────────────────────────────
+# Gradle
+android-app/.gradle/
+android-app/build/
+android-app/app/build/
+android-app/local.properties
+
+# Android Studio
+android-app/.idea/
+android-app/*.iml
+android-app/app/*.iml
+android-app/captures/
+
+# Signing
+android-app/*.jks
+android-app/*.keystore
+android-app/keystore.properties
+
+# APK files (generated outputs)
+*.apk
+*.aab
+
+# ────────────────────────────────────────────
+# Go Backend
+# ────────────────────────────────────────────
+# Binaries
+go-backend/bin/
+go-backend/*.exe
+go-backend/server
+go-backend/cmd/server/server
+
+# Go workspace
+go-backend/vendor/

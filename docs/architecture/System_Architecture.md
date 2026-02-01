@@ -7,7 +7,7 @@
 ```mermaid
 graph TB
     subgraph "Mobile Layer"
-        APP[📱 Android App<br/>Kotlin + MVVM]
+        APP[📱 Android App<br/>Java + MVVM]
     end
     
     subgraph "Message Broker"

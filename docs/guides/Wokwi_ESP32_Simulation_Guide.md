@@ -108,7 +108,7 @@ Create a folder to store Mosquitto configuration:
 
 ```powershell
 # Navigate to your project directory
-cd "I:\My Drive\Project and docs\R & D\IoT MQTT Car"
+cd "path/to/esp32-iot-car"
 
 # Create mqtt-broker folder structure
 mkdir mqtt-broker
@@ -174,7 +174,7 @@ networks:
 
 ```powershell
 # Navigate to mqtt-broker directory
-cd "I:\My Drive\Project and docs\R & D\IoT MQTT Car\mqtt-broker"
+cd "path/to/esp32-iot-car/mqtt-broker"
 
 # Start Mosquitto in background
 docker-compose up -d
@@ -301,6 +301,7 @@ monitor_speed = 115200
 lib_deps =
     knolleary/PubSubClient@^2.8
     bblanchon/ArduinoJson@^6.21.3
+    teckel12/NewPing@^1.9.7
 
 ; Wokwi optimization - faster builds
 build_flags = -DCORE_DEBUG_LEVEL=0
@@ -343,52 +344,69 @@ Create `firmware/iot-car-esp32/diagram.json`:
       "id": "led-motor-a-fwd",
       "top": 150,
       "left": -80,
-      "attrs": { "color": "green", "label": "Motor A FWD" }
+      "attrs": {
+        "color": "green",
+        "label": "Motor A FWD"
+      }
     },
     {
       "type": "wokwi-led",
       "id": "led-motor-a-rev",
       "top": 180,
       "left": -80,
-      "attrs": { "color": "red", "label": "Motor A REV" }
+      "attrs": {
+        "color": "red",
+        "label": "Motor A REV"
+      }
     },
     {
       "type": "wokwi-led",
       "id": "led-motor-b-fwd",
       "top": 150,
       "left": 250,
-      "attrs": { "color": "green", "label": "Motor B FWD" }
+      "attrs": {
+        "color": "green",
+        "label": "Motor B FWD"
+      }
     },
     {
       "type": "wokwi-led",
       "id": "led-motor-b-rev",
       "top": 180,
       "left": 250,
-      "attrs": { "color": "red", "label": "Motor B REV" }
+      "attrs": {
+        "color": "red",
+        "label": "Motor B REV"
+      }
     },
     {
       "type": "wokwi-text",
       "id": "label1",
       "top": -130,
       "left": 40,
-      "attrs": { "text": "Virtual IoT Car" }
+      "attrs": {
+        "text": "Virtual IoT Car"
+      }
     }
   ],
+  "serialMonitor": {
+    "display": "always",
+    "newline": "lf",
+    "baudRate": 115200
+  },
   "connections": [
+    ["esp:TX", "$serialMonitor:RX", "", []],
+    ["esp:RX", "$serialMonitor:TX", "", []],
     ["esp:GND.1", "ultrasonic:GND", "black", ["v-20", "h-30"]],
     ["esp:5V", "ultrasonic:VCC", "red", ["v-30", "h-30"]],
     ["esp:32", "ultrasonic:TRIG", "blue", ["v-40", "h0"]],
     ["esp:33", "ultrasonic:ECHO", "purple", ["v-50", "h0"]],
-    
     ["esp:25", "led-motor-a-fwd:A", "green", ["h-50"]],
     ["esp:GND.2", "led-motor-a-fwd:C", "black", ["h-60"]],
-    
     ["esp:26", "led-motor-a-rev:A", "orange", ["h-50"]],
     ["esp:GND.2", "led-motor-a-rev:C", "black", ["h-60"]],
-    
     ["esp:27", "led-motor-b-fwd:A", "green", ["h50"]],
     ["esp:GND.3", "led-motor-b-fwd:C", "black", ["h60"]],
-    
     ["esp:14", "led-motor-b-rev:A", "orange", ["h50"]],
     ["esp:GND.3", "led-motor-b-rev:C", "black", ["h60"]]
   ]
@@ -423,26 +441,49 @@ Modify `include/config.h` to use gateway-compatible settings:
 #ifndef CONFIG_H
 #define CONFIG_H
 
-// WiFi Configuration for Wokwi Simulation
-// Wokwi uses special SSID for gateway connection
+// ============================================
+// IoT Car ESP32 - Configuration for Wokwi Simulation
+// ============================================
+
+// WiFi Configuration (Wokwi Simulation)
+// Wokwi-GUEST is a special SSID that enables WiFi Gateway
 const char* WIFI_SSID = "Wokwi-GUEST";
 const char* WIFI_PASSWORD = "";
 
-// MQTT Broker - Use localhost since gateway bridges to real network
-// For Wokwi simulation: use "host.wokwi.internal" to reach your PC
-const char* MQTT_BROKER = "host.wokwi.internal";  
+// MQTT Broker Configuration
+// host.wokwi.internal resolves to your PC (localhost) in Wokwi
+const char* MQTT_BROKER = "host.wokwi.internal";
 const int MQTT_PORT = 1883;
 
 // Device Identity
 const char* DEVICE_ID = "car-001";
+const char* MQTT_CLIENT_ID = "esp32-car-001";
 
 // MQTT Topics
 const char* TOPIC_TELEMETRY = "iot-car/car-001/telemetry";
 const char* TOPIC_COMMAND = "iot-car/car-001/command";
 const char* TOPIC_STATUS = "iot-car/car-001/status";
 const char* TOPIC_RESPONSE = "iot-car/car-001/response";
+const char* TOPIC_TEST = "iot-car/car-001/test";
 
-#endif
+// QoS Levels
+const int QOS_TELEMETRY = 0;  // Fire and forget
+const int QOS_COMMAND = 1;    // Ensure delivery
+const int QOS_STATUS = 1;     // Ensure delivery
+
+// ============================================
+// GPIO Pin Definitions (matches diagram.json)
+// ============================================
+
+// Ultrasonic Sensor (HC-SR04)
+#define PIN_ULTRASONIC_TRIG 32
+#define PIN_ULTRASONIC_ECHO 33
+
+// Timing Configuration
+#define TELEMETRY_INTERVAL 500  // Send telemetry every 500ms
+#define MQTT_RECONNECT_DELAY 5000
+
+#endif // CONFIG_H
 ```
 
 ### 5.2 Key Configuration Points
@@ -473,7 +514,7 @@ Before proceeding, ensure your Docker container is running:
 docker ps | findstr iot-car-mqtt
 
 # If not running, start it
-cd "I:\My Drive\Project and docs\R & D\IoT MQTT Car\mqtt-broker"
+cd "path/to/esp32-iot-car/mqtt-broker"
 docker-compose up -d
 ```
 
@@ -588,7 +629,7 @@ ipconfig
 
 1. **Start Mosquitto container** (if not running)
    ```powershell
-   cd "I:\My Drive\Project and docs\R & D\IoT MQTT Car\mqtt-broker"
+   cd "path/to/esp32-iot-car/mqtt-broker"
    docker-compose up -d
    ```
 2. **Start Wokwi simulation** in VS Code
@@ -661,8 +702,8 @@ ipconfig
 ### Project Structure (Updated)
 
 ```
-IoT MQTT Car/
-├── mqtt-broker/                    <── NEW: Docker-based MQTT
+esp32-iot-car/
+├── mqtt-broker/                    <── Docker-based MQTT
 │   ├── config/
 │   │   └── mosquitto.conf
 │   ├── data/
@@ -673,11 +714,14 @@ IoT MQTT Car/
 │       ├── src/
 │       │   └── main.cpp
 │       ├── include/
-│       │   └── config.h
+│       │   ├── config.h
+│       │   └── motor_control.h
 │       ├── platformio.ini
 │       ├── wokwi.toml
 │       └── diagram.json
-└── ...
+├── android-app/                    <── Android controller
+├── go-backend/                     <── Telemetry server
+└── docs/                           <── Documentation
 ```
 
 ### Docker Commands Quick Reference
@@ -771,6 +815,6 @@ After successful simulation testing:
 
 ---
 
-*Document Version: 2.0 (Docker Edition)*  
-*Last Updated: 2026-01-22*  
-*Project: IoT MQTT Car MVP*
+*Document Version: 2.1 (Synced with Project)*  
+*Last Updated: 2026-02-01*  
+*Project: ESP32 IoT Car MQTT*

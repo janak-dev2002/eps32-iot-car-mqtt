@@ -3,13 +3,13 @@
 > A complete full-stack IoT project demonstrating embedded systems, mobile development, and backend integration
 
 ![ESP32](https://img.shields.io/badge/ESP32-PlatformIO-orange)
-![Android](https://img.shields.io/badge/Android-Kotlin-green)
+![Android](https://img.shields.io/badge/Android-Java-green)
 ![Go](https://img.shields.io/badge/Backend-Go-blue)
 ![MQTT](https://img.shields.io/badge/Protocol-MQTT-purple)
 
 ## ✨ Features
 
-- 📱 **Android App** - Kotlin with MVVM architecture, joystick control
+- 📱 **Android App** - Java with MVVM architecture, joystick control
 - 🔌 **ESP32 Firmware** - Motor control, ultrasonic sensor, MQTT telemetry
 - 🐹 **Go Backend** - Telemetry processing, fleet management
 - 🐳 **Docker MQTT** - Mosquitto broker infrastructure
@@ -20,7 +20,7 @@
 ```
 ┌─────────────┐      MQTT       ┌──────────────┐      MQTT       ┌─────────────┐
 │ Android App │ ──────────────► │   Mosquitto  │ ◄────────────── │   ESP32     │
-│  (Kotlin)   │   Commands      │    Broker    │   Telemetry     │  Firmware   │
+│   (Java)    │   Commands      │    Broker    │   Telemetry     │  Firmware   │
 └─────────────┘                 └──────────────┘                 └─────────────┘
                                        │
                                        │ Subscribe
@@ -68,7 +68,7 @@ cd firmware/iot-car-esp32
 
 ```
 ├── firmware/           # ESP32 PlatformIO project
-├── android-app/        # Kotlin Android app (MVVM)
+├── android-app/        # Java Android app (MVVM)
 ├── go-backend/         # Go telemetry server
 ├── mqtt-broker/        # Docker Mosquitto setup
 └── docs/               # Documentation & guides
@@ -95,7 +95,7 @@ cd firmware/iot-car-esp32
 This project teaches:
 - **Embedded Systems** - ESP32 programming, sensors, GPIO
 - **IoT Protocols** - MQTT pub/sub, QoS, topics
-- **Mobile Development** - Android, Kotlin, MVVM
+- **Mobile Development** - Android, Java, MVVM
 - **Backend Development** - Go, concurrency, MQTT clients
 - **DevOps** - Docker, containerization
 
@@ -114,7 +114,7 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ## 👤 Author
 
-**Janak** - [GitHub Profile](https://github.com/janak-dev2002)
+**DevJ** - [GitHub Profile](https://github.com/janak-dev2002) | 076-222-8848
 
 ---
 

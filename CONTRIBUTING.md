@@ -37,7 +37,7 @@ docker-compose up -d
 ## 📝 Code Style
 
 - **C++**: Follow Arduino/ESP-IDF conventions
-- **Kotlin**: Use Android Kotlin style guide
+- **Java**: Use Android Java style guide
 - **Go**: Run `go fmt` before committing
 
 ## 🔀 Pull Request Process

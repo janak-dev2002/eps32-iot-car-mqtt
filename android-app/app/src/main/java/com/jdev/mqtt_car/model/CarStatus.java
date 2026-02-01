@@ -1,5 +1,7 @@
 package com.jdev.mqtt_car.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class CarStatus {
 
     private final String device_id;
@@ -10,6 +12,12 @@ public class CarStatus {
         this.device_id = device_id;
         this.status = status;
         this.firmware = firmware;
+    }
+
+    public CarStatus(){
+        this.device_id = "";
+        this.status = "offline";
+        this.firmware = "";
     }
 
     public String getDevice_id() {
@@ -24,7 +32,4 @@ public class CarStatus {
         return firmware;
     }
 
-    public static CarStatus defaultStatus() {
-        return new CarStatus("","offline","");
-    }
 }

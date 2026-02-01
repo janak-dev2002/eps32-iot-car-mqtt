@@ -18,7 +18,7 @@ public class MainViewModel extends AndroidViewModel implements MqttManager.MqttC
     private final MqttManager mqttManager;
     private final MutableLiveData<TelemetryData> telemetry = new MutableLiveData<>(TelemetryData.empty());
     private final MutableLiveData<MqttConnectionState> connectionState = new MutableLiveData<>(MqttConnectionState.DISCONNECTED);
-    private final MutableLiveData<CarStatus> carStatus = new MutableLiveData<>();
+    private final MutableLiveData<CarStatus> carStatusLive = new MutableLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private final MutableLiveData<String> actionText = new MutableLiveData<>("Idle");
 
@@ -40,7 +40,7 @@ public class MainViewModel extends AndroidViewModel implements MqttManager.MqttC
     }
 
     public LiveData<CarStatus> getCarStatusLiveData(){
-        return carStatus;
+        return carStatusLive;
     }
 
     public LiveData<String> getErrorMessage() {
@@ -62,7 +62,7 @@ public class MainViewModel extends AndroidViewModel implements MqttManager.MqttC
 
     public void disconnect(){
         mqttManager.disconnect();
-        carStatus.setValue(CarStatus.defaultStatus());
+        carStatusLive.setValue(new CarStatus());
         telemetry.setValue(TelemetryData.empty());
         connectionState.setValue(MqttConnectionState.DISCONNECTED);
     }
@@ -88,20 +88,18 @@ public class MainViewModel extends AndroidViewModel implements MqttManager.MqttC
     public void onDisconnected() {
 
         connectionState.postValue(MqttConnectionState.DISCONNECTED);
-        carStatus.postValue(CarStatus.defaultStatus());
+        carStatusLive.postValue(new CarStatus());
         telemetry.postValue(TelemetryData.empty());
     }
 
     @Override
-    public void onTelemetryReceived(int battery, int distance, int temperature, String currentAction, int wifiRssi, int freeHeap) {
-
-        telemetry.postValue(new TelemetryData(battery,distance,temperature,currentAction,wifiRssi,freeHeap));
-
+    public void onTelemetryReceived(TelemetryData data) {
+        telemetry.postValue(data);
     }
 
     @Override
-    public void onCarStatusReceived(String device_id, String status, String firmware) {
-        carStatus.postValue(new CarStatus(device_id,status,firmware));
+    public void onCarStatusReceived(CarStatus carStatus) {
+        carStatusLive.postValue(carStatus);
     }
 
     @Override

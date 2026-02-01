@@ -3,7 +3,10 @@ package com.jdev.mqtt_car.data.source;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.jdev.mqtt_car.model.CarCommand;
+import com.jdev.mqtt_car.model.CarStatus;
+import com.jdev.mqtt_car.model.TelemetryData;
 
 import info.mqtt.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.*;
@@ -16,16 +19,16 @@ public class MqttManager {
     private final String deviceId;
     private final MqttAndroidClient mqttClient;
     private final MqttCallback listener;
+    private final Gson gson = new Gson();
 
     public interface MqttCallback {
         void onConnected();
 
         void onDisconnected();
 
-        void onTelemetryReceived(int battery, int distance, int temperature, String currentAction, int wifiRssi,
-                int freeHeap);
+        void onTelemetryReceived(TelemetryData telemetryData);
 
-        void onCarStatusReceived(String device_id, String status, String firmware);
+        void onCarStatusReceived(CarStatus carStatus);
 
         void onError(String message);
     }
@@ -108,24 +111,15 @@ public class MqttManager {
         Log.d(TAG, "Message: " + topic + " -> " + payload);
 
         try {
-            JSONObject json = new JSONObject(payload);
-
             if (topic.contains("/telemetry")) {
-                // Parse all telemetry fields from ESP32
-                int battery = json.optInt("battery", 0);
-                int distance = json.optInt("distance_front", 0);
-                int temperature = json.optInt("temperature", 0);
-                String currentAction = json.optString("current_action", "unknown");
-                int wifiRssi = json.optInt("wifi_rssi", 0);
-                int freeHeap = json.optInt("free_heap", 0);
-
-                listener.onTelemetryReceived(battery, distance, temperature, currentAction, wifiRssi, freeHeap);
+                // Parse telemetry using Gson - maps JSON directly to TelemetryData
+                TelemetryData data = gson.fromJson(payload, TelemetryData.class);
+                data.initTimestamp(); // Set timestamp since it's transient
+                listener.onTelemetryReceived(data);
             } else if (topic.contains("/status")) {
-                // Handle status updates from ESP3)
-                String deviceId = json.optString("device_id");
-                String currentStatus = json.optString("status", "unknown");
-                String firmware = json.optString("firmware");
-                listener.onCarStatusReceived(deviceId, currentStatus,firmware);
+                // Handle status updates from ESP32
+                CarStatus carStatus = gson.fromJson(payload, CarStatus.class);
+                listener.onCarStatusReceived(carStatus);
             }
         } catch (Exception e) {
             Log.e(TAG, "Parse error", e);

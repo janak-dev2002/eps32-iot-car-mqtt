@@ -2,6 +2,7 @@ package com.jdev.mqtt_car.model;
 
 import androidx.annotation.NonNull;
 
+
 public class CarCommand {
 
     private final String action;
@@ -16,7 +17,6 @@ public class CarCommand {
     @NonNull
     @Override
     public String toString() {
-
         return "{\"action\": \"" + action + "\", \"command_id\": \"" + command_id + "\"}";
     }
 }

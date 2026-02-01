@@ -2,19 +2,30 @@ package com.jdev.mqtt_car.model;
 
 import androidx.annotation.NonNull;
 
-/**
- * Data model representing telemetry information received from the IoT car.
- * Used as a data holder in MVVM architecture for LiveData observations.
- */
+import com.google.gson.annotations.SerializedName;
+
+
 public class TelemetryData {
 
+    @SerializedName("battery")
     private final int battery;
+
+    @SerializedName("distance_front")
     private final int distanceFront;
+
+    @SerializedName("temperature")
     private final int temperature;
+
+    @SerializedName("current_action")
     private final String currentAction;
+
+    @SerializedName("wifi_rssi")
     private final int wifiRssi;
+
+    @SerializedName("free_heap")
     private final int freeHeap;
-    private final long timestamp;
+
+    private transient long timestamp; // transient to avoid Gson serialization
 
     public TelemetryData(int battery, int distanceFront, int temperature,
                          String currentAction, int wifiRssi, int freeHeap) {
@@ -24,6 +35,26 @@ public class TelemetryData {
         this.currentAction = currentAction;
         this.wifiRssi = wifiRssi;
         this.freeHeap = freeHeap;
+        this.timestamp = System.currentTimeMillis();
+    }
+
+    /**
+     * Default constructor required for Gson deserialization
+     */
+    public TelemetryData(){
+        this.battery = 0;
+        this.distanceFront = 0;
+        this.temperature = 0;
+        this.currentAction = "unknown";
+        this.wifiRssi = 0;
+        this.freeHeap = 0;
+        this.timestamp = System.currentTimeMillis();
+    }
+
+    /**
+     * Initialize timestamp after Gson parsing (since transient fields are not set by Gson)
+     */
+    public void initTimestamp() {
         this.timestamp = System.currentTimeMillis();
     }
 

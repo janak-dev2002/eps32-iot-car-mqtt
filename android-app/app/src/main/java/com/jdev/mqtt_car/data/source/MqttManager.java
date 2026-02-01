@@ -1,4 +1,4 @@
-package com.jdev.mqtt_car.mqtt;
+package com.jdev.mqtt_car.data.source;
 
 import android.content.Context;
 import android.util.Log;
@@ -12,9 +12,7 @@ public class MqttManager {
     private static final String CLIENT_ID = "android-app-" + System.currentTimeMillis();
 
     // Dynamic configuration from SharedPreferences
-    private final String brokerUrl;
-    private final String deviceId;
-
+    private final String brokerUrl,deviceId;
     private MqttAndroidClient mqttClient;
     private MqttCallback listener;
 

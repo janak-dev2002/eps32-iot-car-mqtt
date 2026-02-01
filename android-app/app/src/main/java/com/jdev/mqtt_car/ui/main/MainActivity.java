@@ -2,7 +2,9 @@ package com.jdev.mqtt_car.ui.main;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -20,10 +22,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.jdev.mqtt_car.model.MqttConnectionState;
 import com.jdev.mqtt_car.ui.login.LoginActivity;
 import com.jdev.mqtt_car.R;
-import com.jdev.mqtt_car.mqtt.MqttManager;
-import com.jdev.mqtt_car.mqtt.MqttPreferences;
+import com.jdev.mqtt_car.data.source.MqttPreferences;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
 //    private MqttManager mqttManager;
 
@@ -31,15 +32,10 @@ public class MainActivity extends AppCompatActivity{
     private View MqttIndicatorView, carIndicatorView;
 
     // Telemetry displays
-    private TextView batteryText;
-    private TextView distanceText;
-    private TextView rssiText;
-    private TextView tempText;
-    private TextView actionText;
+    private TextView batteryText, distanceText, rssiText, tempText, actionText;
 
     // Buttons
-    private Button btnConnect;
-    private Button btnSettings;
+    private Button btnConnect,btnSettings;
 
     // Animations
     private Animation pulseAnimation;
@@ -75,28 +71,25 @@ public class MainActivity extends AppCompatActivity{
         // Setup control buttons with touch-hold behavior
         setupControlButtons();
     }
-
     @SuppressLint("SetTextI18n")
-    private void setUpObservers(){
+    private void setUpObservers() {
 
-        mainViewModel.getTelemetryDataLiveData().observe(this, data ->{
+        mainViewModel.getTelemetryDataLiveData().observe(this, data -> {
             batteryText.setText(data.getBatteryDisplay());
             distanceText.setText(data.getDistanceDisplay());
             rssiText.setText(data.getRssiDisplay());
             tempText.setText(data.getTemperatureDisplay());
+            updateActionDisplay(data.getCurrentAction().toUpperCase());
+
+
         });
 
-        mainViewModel.getActionText().observe(this,data ->{
+        mainViewModel.getActionText().observe(this, data -> {
             // Format action text nicely
-            String displayAction = data.toUpperCase();
-            if (displayAction.equals("STOP")) {
-                displayAction = "IDLE";
-            }
-//            actionText.setText(displayAction);
-            updateActionDisplay(displayAction);
+            updateActionDisplay(data.toUpperCase());
         });
 
-        mainViewModel.getCarStatusLiveData().observe(this,data->{
+        mainViewModel.getCarStatusLiveData().observe(this, data -> {
             if (data.getStatus().equals("online")) {
                 carIndicatorView.setBackgroundResource(R.drawable.circle_green);
                 startPulseAnimation(carIndicatorView);
@@ -106,16 +99,17 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
-        mainViewModel.getMqttConnectionStateLiveData().observe(this, data ->{
+        mainViewModel.getMqttConnectionStateLiveData().observe(this, data -> {
 
-            if(data.equals(MqttConnectionState.CONNECTING)){
-                btnConnect.setText("⚡ "+MqttConnectionState.CONNECTING+" ⚡");
+            if (data.equals(MqttConnectionState.CONNECTING)) {
+
+                btnConnect.setText("⚡ CONNECTING ⚡");
             } else if (data.equals(MqttConnectionState.CONNECTED)) {
                 isConnected = true;
                 MqttIndicatorView.setBackgroundResource(R.drawable.circle_green);
                 startPulseAnimation(MqttIndicatorView);
                 btnConnect.setText("⚡ DISCONNECT ⚡");
-            }else{
+            } else {
                 isConnected = false;
                 MqttIndicatorView.setBackgroundResource(R.drawable.circle_red);
                 stopAnimation(MqttIndicatorView);
@@ -123,7 +117,7 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
-        mainViewModel.getErrorMessage().observe(this,data->{
+        mainViewModel.getErrorMessage().observe(this, data -> {
             btnConnect.setText("⚡ CONNECT ⚡");
             stopAnimation(MqttIndicatorView);
             stopAnimation(carIndicatorView);
@@ -199,9 +193,9 @@ public class MainActivity extends AppCompatActivity{
         // Stop button with special handling
         Button btnStop = findViewById(R.id.btnStop);
         btnStop.setOnClickListener(v -> {
+
             animateButtonPress(v);
             mainViewModel.sendCommand("stop");
-//            updateActionDisplay("STOP");
         });
     }
 
@@ -214,16 +208,18 @@ public class MainActivity extends AppCompatActivity{
      */
     @SuppressLint("ClickableViewAccessibility")
     private void setupControlButton(int buttonId, String action) {
+
         Button button = findViewById(buttonId);
 
         button.setOnTouchListener((v, event) -> {
+            Log.d("MainActivity", "Touch event: " + event.getAction());
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     // Visual feedback
                     v.startAnimation(buttonPressAnimation);
                     // Start moving - send action directly to ESP32
                     mainViewModel.sendCommand(action);
-
+                    break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
                     // Visual feedback
@@ -247,7 +243,11 @@ public class MainActivity extends AppCompatActivity{
      * Update the action display text
      */
     private void updateActionDisplay(String action) {
-        runOnUiThread(() -> actionText.setText(action));
+        String displayAction = action;
+        if (displayAction.equals("STOP")) {
+            displayAction = "IDLE";
+        }
+        actionText.setText(displayAction);
     }
 
     /**

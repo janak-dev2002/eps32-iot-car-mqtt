@@ -2,21 +2,21 @@ package com.jdev.mqtt_car.ui.login;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.jdev.mqtt_car.R;
-import com.jdev.mqtt_car.mqtt.MqttPreferences;
 import com.jdev.mqtt_car.ui.main.MainActivity;
 
 /**
@@ -33,7 +33,9 @@ public class LoginActivity extends AppCompatActivity {
     private TextView errorText;
     private Button btnConnect;
 
-    private MqttPreferences mqttPrefs;
+    private LoginViewModel viewModel;
+
+//    private MqttPreferences mqttPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +50,11 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         // Initialize preferences
-        mqttPrefs = new MqttPreferences(this);
+        viewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
+        setupObservers();
         // Check if already configured and should auto-login
-        if (mqttPrefs.isConfigured() && mqttPrefs.shouldRemember()) {
+        if (viewModel.isConfigured() && viewModel.getShouldRemember()) {
             // Skip login, go directly to MainActivity
             navigateToMain();
             return;
@@ -64,6 +67,28 @@ public class LoginActivity extends AppCompatActivity {
         loadSavedConfig();
     }
 
+    private void setupObservers() {
+
+        viewModel.isLoginSuccess.observe(this, success -> {
+            if (success != null && success) {
+                navigateToMain();
+            }
+        });
+
+        viewModel.hasErrorMessage.observe(this, error -> {
+            if (error != null && !error.isEmpty()) {
+                showError(error);
+                //Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+//        viewModel.isLoading.observe(this, loading -> {
+//            progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
+//            binding.btnConnect.setEnabled(!loading);
+//        });
+
+    }
+
     private void initializeViews() {
         editBrokerIp = findViewById(R.id.editBrokerIp);
         editBrokerPort = findViewById(R.id.editBrokerPort);
@@ -73,19 +98,19 @@ public class LoginActivity extends AppCompatActivity {
         btnConnect = findViewById(R.id.btnConnect);
 
         // Connect button click
-        btnConnect.setOnClickListener(v -> validateAndConnect());
+        btnConnect.setOnClickListener(v -> appLogin());
     }
 
     private void loadSavedConfig() {
-        if (mqttPrefs.isConfigured()) {
-            editBrokerIp.setText(mqttPrefs.getBrokerIp());
-            editBrokerPort.setText(String.valueOf(mqttPrefs.getBrokerPort()));
-            editDeviceId.setText(mqttPrefs.getDeviceId());
-            checkRemember.setChecked(mqttPrefs.shouldRemember());
+        if (viewModel.isConfigured()) {
+            editBrokerIp.setText(viewModel.getSavedBrokerIp());
+            editBrokerPort.setText(String.valueOf(viewModel.getSavedBrokerPort()));
+            editDeviceId.setText(viewModel.getSavedDeviceId());
+            checkRemember.setChecked(viewModel.getShouldRemember());
         }
     }
 
-    private void validateAndConnect() {
+    private void appLogin() {
 
         hideError();
 
@@ -93,43 +118,7 @@ public class LoginActivity extends AppCompatActivity {
         String portStr = editBrokerPort.getText().toString().trim();
         String deviceId = editDeviceId.getText().toString().trim();
 
-        // Validate IP
-        if (TextUtils.isEmpty(brokerIp)) {
-            showError("Please enter server IP address");
-            editBrokerIp.requestFocus();
-            return;
-        }
-
-        // Validate port
-        int port;
-        if (TextUtils.isEmpty(portStr)) {
-            port = 1883; // Default MQTT port
-        } else {
-            try {
-                port = Integer.parseInt(portStr);
-                if (port < 1 || port > 65535) {
-                    showError("Port must be between 1 and 65535");
-                    editBrokerPort.requestFocus();
-                    return;
-                }
-            } catch (NumberFormatException e) {
-                showError("Invalid port number");
-                editBrokerPort.requestFocus();
-                return;
-            }
-        }
-
-        // Validate device ID
-        if (TextUtils.isEmpty(deviceId)) {
-            deviceId = "car-001"; // Default device ID
-        }
-
-        // Save configuration
-        mqttPrefs.saveBrokerConfig(brokerIp, port, deviceId);
-        mqttPrefs.setRememberCredentials(checkRemember.isChecked());
-
-        // Navigate to main activity
-        navigateToMain();
+        viewModel.login(brokerIp, portStr, deviceId, "", "", checkRemember);
     }
 
     private void showError(String message) {

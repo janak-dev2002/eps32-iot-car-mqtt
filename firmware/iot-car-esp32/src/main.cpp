@@ -40,7 +40,7 @@ unsigned int messageCount = 0;
 String currentCommand = "stop";
 String previousCommand = "stop";
 unsigned long commandStartTime = 0;
-const unsigned long COMMAND_DURATION = 2000; // LEDs stay on for 2 seconds
+const unsigned long COMMAND_DURATION = 10000; // LEDs stay on for 10 seconds
 
 bool isWiFiConnected = false;
 

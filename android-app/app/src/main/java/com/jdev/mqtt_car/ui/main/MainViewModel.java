@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.jdev.mqtt_car.model.CarStatus;
 import com.jdev.mqtt_car.model.MqttConnectionState;
 import com.jdev.mqtt_car.model.TelemetryData;
-import com.jdev.mqtt_car.mqtt.MqttManager;
+import com.jdev.mqtt_car.data.source.MqttManager;
 
 import org.jetbrains.annotations.NotNull;
 

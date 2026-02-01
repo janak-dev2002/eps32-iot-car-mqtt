@@ -1,5 +1,7 @@
 package com.jdev.mqtt_car.model;
 
+import androidx.annotation.NonNull;
+
 public class CarCommand {
 
     private final String action;
@@ -10,11 +12,11 @@ public class CarCommand {
         this.command_id = command_id;
     }
 
-    public String getAction() {
-        return action;
-    }
 
-    public String getCommand_id() {
-        return command_id;
+    @NonNull
+    @Override
+    public String toString() {
+
+        return "{\"action\": \"" + action + "\", \"command_id\": \"" + command_id + "\"}";
     }
 }

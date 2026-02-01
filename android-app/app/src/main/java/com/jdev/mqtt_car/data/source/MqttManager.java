@@ -3,6 +3,8 @@ package com.jdev.mqtt_car.data.source;
 import android.content.Context;
 import android.util.Log;
 
+import com.jdev.mqtt_car.model.CarCommand;
+
 import info.mqtt.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.*;
 import org.json.JSONObject;
@@ -11,10 +13,9 @@ public class MqttManager {
     private static final String TAG = "MqttManager";
     private static final String CLIENT_ID = "android-app-" + System.currentTimeMillis();
 
-    // Dynamic configuration from SharedPreferences
-    private final String brokerUrl,deviceId;
-    private MqttAndroidClient mqttClient;
-    private MqttCallback listener;
+    private final String deviceId;
+    private final MqttAndroidClient mqttClient;
+    private final MqttCallback listener;
 
     public interface MqttCallback {
         void onConnected();
@@ -34,7 +35,8 @@ public class MqttManager {
 
         // Load configuration from SharedPreferences
         MqttPreferences prefs = new MqttPreferences(context);
-        this.brokerUrl = prefs.getBrokerUrl();
+        // Dynamic configuration from SharedPreferences
+        String brokerUrl = prefs.getBrokerUrl();
         this.deviceId = prefs.getDeviceId();
 
         Log.d(TAG, "Connecting to: " + brokerUrl + " as device: " + deviceId);
@@ -130,21 +132,11 @@ public class MqttManager {
         }
     }
 
-    /**
-     * Send a command to the ESP32 car.
-     * The action should be one of: "forward", "backward", "left", "right", "stop"
-     * This matches the ESP32 firmware's expected JSON format.
-     *
-     * @param action The movement command (forward, backward, left, right, stop)
-     */
+
     public void sendCommand(String action) {
         try {
-            // JSON format expected by ESP32:
             // {"action": "forward", "command_id": "cmd-123456789"}
-            JSONObject command = new JSONObject();
-            command.put("action", action);
-            command.put("command_id", "cmd-" + System.currentTimeMillis());
-
+            CarCommand command = new CarCommand(action, "cmd-" + System.currentTimeMillis());
             String topic = "iot-car/" + deviceId + "/command";
             MqttMessage message = new MqttMessage(command.toString().getBytes());
             message.setQos(1);

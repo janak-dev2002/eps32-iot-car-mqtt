@@ -101,8 +101,62 @@ This project teaches:
 
 ## 📸 Demo
 
-<!-- Add your demo GIF/screenshots here -->
-<!-- ![Demo](docs/media/demo.gif) -->
+### 🎬 Video Demo
+https://github.com/user-attachments/assets/iot-car-demo.mp4
+
+[📹 Watch Full Demo Video](docs/media/videos/IoT%20Car.mp4)
+
+---
+
+### 🎮 Wokwi ESP32 Simulation
+
+<p align="center">
+  <img src="docs/media/screenshots/Screenshot 2026-02-01 210451.png" alt="Wokwi ESP32 Simulation" width="700"/>
+</p>
+
+*Virtual IoT Car with ESP32, HC-SR04 ultrasonic sensor, and L298N motor drivers running in Wokwi Simulator*
+
+---
+
+### 📱 Android Controller App
+
+<p align="center">
+  <img src="docs/media/screenshots/Screenshot 2026-01-31 141733.png" alt="Android App UI Design" width="700"/>
+</p>
+
+*Android Studio layout designer showing the IoT Car Controller interface with joystick controls and MQTT status indicators*
+
+<p align="center">
+  <img src="docs/media/screenshots/Screenshot 2026-02-01 210121.png" alt="Android App with Emulator" width="700"/>
+</p>
+
+*MainViewModel implementation with MQTT connection management running on Pixel 7a emulator*
+
+---
+
+### 🔧 Full Stack Development Setup
+
+<p align="center">
+  <img src="docs/media/screenshots/Screenshot 2026-02-01 204222.png" alt="Full Stack Setup" width="700"/>
+</p>
+
+*VS Code with ESP32 firmware, Wokwi simulation, and Go backend telemetry running simultaneously*
+
+<p align="center">
+  <img src="docs/media/screenshots/Screenshot 2026-02-01 205058.png" alt="Go Backend with Wokwi" width="700"/>
+</p>
+
+*Go backend source code alongside Wokwi virtual car simulation*
+
+---
+
+### 📚 MQTT Protocol Overview
+
+<p align="center">
+  <img src="docs/media/screenshots/624079131_18179667184368780_7503444346878439847_n.jpg" alt="API Architectures" width="600"/>
+</p>
+
+*Comparison of API architectures - This project uses MQTT for lightweight IoT messaging*
 
 ## 🤝 Contributing
 

@@ -221,4 +221,4 @@ go-backend/cmd/server/server
 go-backend/vendor/
 
 #media
-media/video/*
+media/video/*.mp4

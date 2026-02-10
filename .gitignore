@@ -219,3 +219,6 @@ go-backend/cmd/server/server
 
 # Go workspace
 go-backend/vendor/
+
+#media
+media/video/*

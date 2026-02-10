@@ -158,9 +158,6 @@ https://github.com/user-attachments/assets/iot-car-demo.mp4
 
 *Comparison of API architectures - This project uses MQTT for lightweight IoT messaging*
 
-## 🤝 Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## 📄 License
 
